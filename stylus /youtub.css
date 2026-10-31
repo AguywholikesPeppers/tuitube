@@ -1,0 +1,532 @@
+/* ==UserStyle==
+@name         TuiTube
+@namespace    tuitube
+@version      0.5.1
+@description  TUI-style YouTube. Colours come from the TuiTube Colors helper extension (matugen); falls back to defaults without it.
+@author       you
+@preprocessor default
+@var number   radius    "Corner radius (px)"        [0, 0, 24, 1]
+@var number   bw        "Panel border width (px)"   [2, 1, 4, 1]
+@var checkbox frame     "Outer window frame"        1
+@var text     font      "Font" "'JetBrainsMono Nerd Font','JetBrains Mono','Iosevka','Cascadia Mono',monospace"
+==/UserStyle== */
+
+@-moz-document domain("youtube.com") {
+
+
+/* ---------- Palette ---------- */
+:root, html, html[dark] {
+  --bg: var(--mt-bg, #1a1212);
+  --bg2: var(--mt-bg2, #261a1a);
+  --fg: var(--mt-fg, #f2dcd8);
+  --muted: var(--mt-muted, #9c8582);
+  --accent: var(--mt-accent, #f4a6a0);
+  --accent2: var(--mt-accent2, #f48a8a);
+  --tt-bg: var(--bg);
+  --tt-bg2: var(--bg2);
+  --tt-fg: var(--fg);
+  --tt-muted: var(--muted);
+  --tt-accent: var(--accent);
+  --tt-accent2: var(--accent2);
+  --tt-r: calc(var(--radius) * 1px);
+  --tt-bw: calc(var(--bw) * 1px);
+  --tt-soft: color-mix(in srgb, var(--muted) 45%, transparent);
+  --tt-mast: 76px;
+
+  --yt-spec-base-background: var(--bg) !important;
+  --yt-spec-raised-background: var(--bg2) !important;
+  --yt-spec-menu-background: var(--bg2) !important;
+  --yt-spec-general-background-a: var(--bg) !important;
+  --yt-spec-general-background-b: var(--bg) !important;
+  --yt-spec-general-background-c: var(--bg2) !important;
+  --yt-spec-text-primary: var(--fg) !important;
+  --yt-spec-text-secondary: var(--muted) !important;
+  --yt-spec-static-brand-white: var(--fg) !important;
+  --yt-spec-10-percent-layer: var(--bg2) !important;
+  --yt-spec-badge-chip-background: var(--bg2) !important;
+  --yt-spec-button-chip-background-hover: var(--bg2) !important;
+  --yt-spec-touch-response: var(--bg2) !important;
+  --yt-spec-call-to-action: var(--accent) !important;
+  --yt-spec-themed-blue: var(--accent) !important;
+  --ytd-masthead-height: var(--tt-mast) !important;
+}
+
+html, body, ytd-app { background: var(--tt-bg) !important; }
+
+html, body, ytd-app, ytd-app *, input, button, textarea {
+  font-family: var(--font) !important;
+  letter-spacing: 0 !important;
+}
+
+* { scrollbar-width: thin; scrollbar-color: var(--tt-accent) transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: var(--tt-accent); border-radius: 0; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ---------- Outer window frame ---------- */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 4px;
+  border: calc(var(--frame) * var(--tt-bw)) solid var(--tt-accent);
+  border-radius: var(--tt-r);
+  pointer-events: none;
+  z-index: 99999;
+}
+
+/* ---------- Panels (border + floating label) ---------- */
+ytd-masthead #container,
+ytd-guide-renderer,
+ytd-mini-guide-renderer,
+ytd-browse:is([page-subtype="home"], [page-subtype="subscriptions"]) #primary,
+ytd-search ytd-search-header-renderer,
+ytd-search #contents.ytd-section-list-renderer,
+ytd-watch-flexy #player,
+ytd-watch-flexy #above-the-fold > #title,
+ytd-watch-metadata #owner,
+ytd-watch-metadata #actions,
+ytd-watch-metadata #description,
+ytd-watch-flexy #secondary,
+ytd-comments#comments {
+  position: relative !important;
+  border: var(--tt-bw) solid var(--tt-muted) !important;
+  border-radius: var(--tt-r) !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+ytd-masthead #container::before,
+ytd-guide-renderer::before,
+ytd-mini-guide-renderer::before,
+ytd-browse:is([page-subtype="home"], [page-subtype="subscriptions"]) #primary::before,
+ytd-search ytd-search-header-renderer::before,
+ytd-search #contents.ytd-section-list-renderer::before,
+ytd-watch-flexy #player::before,
+ytd-watch-flexy #above-the-fold > #title::before,
+ytd-watch-metadata #owner::before,
+ytd-watch-metadata #actions::before,
+ytd-watch-metadata #description::before,
+ytd-watch-flexy #secondary::before,
+ytd-comments#comments::before {
+  position: absolute;
+  top: -0.85em;
+  left: 18px;
+  padding: 0 6px;
+  background: var(--tt-bg);
+  color: var(--tt-muted);
+  font-size: 12px;
+  line-height: 1.4;
+  z-index: 50;
+  pointer-events: none;
+}
+
+ytd-masthead #container::before                    { content: "Nav"; }
+ytd-guide-renderer::before                         { content: "Sidebar"; }
+ytd-mini-guide-renderer::before                    { content: "Menu"; }
+ytd-browse:is([page-subtype="home"], [page-subtype="subscriptions"]) #primary::before                        { content: "Feed"; }
+ytd-search ytd-search-header-renderer::before           { content: "Category"; }
+ytd-search #contents.ytd-section-list-renderer::before { content: "Results"; }
+ytd-watch-flexy #player::before                    { content: "Video"; }
+ytd-watch-flexy #above-the-fold > #title::before   { content: "Title"; }
+ytd-watch-metadata #owner::before                  { content: "Channel"; }
+ytd-watch-metadata #actions::before                { content: "Actions"; }
+ytd-watch-metadata #description::before            { content: "Description"; }
+ytd-watch-flexy #secondary::before                 { content: "Recommended"; }
+ytd-comments#comments::before                      { content: "Comments"; }
+
+/* accent-bordered "content" panels */
+ytd-browse:is([page-subtype="home"], [page-subtype="subscriptions"]) #primary,
+ytd-search #contents.ytd-section-list-renderer,
+ytd-watch-flexy #player,
+ytd-watch-flexy #secondary,
+ytd-comments#comments {
+  border-color: var(--tt-accent) !important;
+}
+ytd-browse:is([page-subtype="home"], [page-subtype="subscriptions"]) #primary::before,
+ytd-search #contents.ytd-section-list-renderer::before,
+ytd-watch-flexy #player::before,
+ytd-watch-flexy #secondary::before,
+ytd-comments#comments::before {
+  color: var(--tt-accent);
+  font-weight: 700;
+}
+
+/* internal padding so content doesn't touch borders */
+ytd-browse:is([page-subtype="home"], [page-subtype="subscriptions"]) #primary,
+ytd-search #contents.ytd-section-list-renderer,
+ytd-watch-flexy #secondary,
+ytd-comments#comments,
+ytd-watch-metadata #description { padding: 16px !important; }
+ytd-search ytd-search-header-renderer {
+  padding: 16px 12px 10px !important;
+  margin: 8px 0 22px !important;
+  background: transparent !important;
+}
+ytd-search #header.ytd-section-list-renderer { border: 0 !important; padding: 0 !important; margin: 0 !important; }
+ytd-search #header.ytd-section-list-renderer::before { content: none !important; }
+ytd-search #contents.ytd-section-list-renderer { padding-top: 22px !important; }
+
+/* ---------- Masthead (Nav) ---------- */
+ytd-masthead {
+  height: var(--tt-mast) !important;
+  padding: 14px 20px 0 !important;
+  box-sizing: border-box !important;
+  background: var(--tt-bg) !important;
+  border: 0 !important;
+}
+ytd-masthead #container { height: 100% !important; padding: 0 16px !important; }
+ytd-masthead #background { display: none !important; }
+
+/* ---------- Search box ---------- */
+yt-searchbox {
+  background: var(--tt-bg2) !important;
+  border: var(--tt-bw) solid var(--tt-muted) !important;
+  border-right: 0 !important;
+  border-radius: var(--tt-r) 0 0 var(--tt-r) !important;
+  box-sizing: border-box !important;
+}
+yt-searchbox:focus-within { border-color: var(--tt-accent) !important; }
+yt-searchbox form,
+yt-searchbox .ytSearchboxComponentSearchForm,
+yt-searchbox .ytSearchboxComponentInputBox,
+yt-searchbox .ytSearchboxComponentInputBoxDark,
+yt-searchbox input,
+ytd-searchbox #search-input, ytd-searchbox #search-input input {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+}
+yt-searchbox input:focus, yt-searchbox input:focus-visible { outline: 0 !important; box-shadow: none !important; }
+.ytSearchboxComponentSearchButton, #search-icon-legacy {
+  background: var(--tt-accent) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  width: 64px !important;
+}
+.ytSearchboxComponentSearchButton svg, #search-icon-legacy svg,
+.ytSearchboxComponentSearchButton yt-icon { color: var(--tt-bg) !important; fill: var(--tt-bg) !important; }
+
+/* ---------- Header buttons (Create, mic, bell) ---------- */
+#buttons ytd-button-renderer a,
+#buttons ytd-button-renderer button,
+#voice-search-button button,
+#buttons ytd-notification-topbar-button-renderer button {
+  background: var(--tt-bg2) !important;
+  border: 1px solid var(--tt-soft) !important;
+  border-radius: var(--tt-r) !important;
+}
+#buttons ytd-button-renderer a:hover,
+#buttons ytd-button-renderer button:hover { border-color: var(--tt-accent) !important; }
+
+/* ---------- Sidebar / mini guide ---------- */
+ytd-guide-renderer, ytd-mini-guide-renderer {
+  background: var(--tt-bg) !important;
+  margin: 8px 0 8px 20px !important;
+  height: calc(100vh - var(--tt-mast) - 16px) !important;
+  top: var(--tt-mast) !important;
+}
+ytd-mini-guide-renderer { width: 96px !important; }
+ytd-guide-entry-renderer a, ytd-mini-guide-entry-renderer a {
+  border: 1px solid transparent !important;
+  border-radius: var(--tt-r) !important;
+}
+ytd-guide-entry-renderer a:hover, ytd-mini-guide-entry-renderer:hover a {
+  background: var(--tt-bg2) !important;
+  border-color: var(--tt-soft) !important;
+}
+ytd-guide-entry-renderer[active] a {
+  background: var(--tt-bg2) !important;
+  border-color: var(--tt-accent) !important;
+  box-shadow: inset 3px 0 0 var(--tt-accent);
+}
+ytd-guide-section-renderer, ytd-guide-renderer #guide-inner-content { background: transparent !important; }
+ytd-guide-section-renderer { border-color: var(--tt-soft) !important; }
+tp-yt-app-drawer#guide { --app-drawer-content-container-background-color: transparent; }
+
+ytd-page-manager { margin-top: var(--tt-mast) !important; }
+ytd-browse:is([page-subtype="home"], [page-subtype="subscriptions"]) #primary, ytd-search #primary { margin: 8px 20px 20px 8px !important; }
+
+/* ---------- Filter chips ---------- */
+ytd-feed-filter-chip-bar-renderer, #chips-wrapper, #chips {
+  background: transparent !important;
+  border: 0 !important;
+}
+/* the box lives on the OUTER element only... */
+yt-chip-cloud-chip-renderer {
+  background: var(--tt-bg2) !important;
+  color: var(--tt-fg) !important;
+  border: 1px solid var(--tt-soft) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+/* ...and everything inside it is flat, square and transparent */
+yt-chip-cloud-chip-renderer *,
+chip-shape, chip-shape *,
+.ytChipShapeChip, .ytChipShapeInactive, .ytChipShapeActive {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: inherit !important;
+}
+yt-chip-cloud-chip-renderer:hover { border-color: var(--tt-accent) !important; }
+yt-chip-cloud-chip-renderer[selected],
+yt-chip-cloud-chip-renderer[chip-style][selected] {
+  background: var(--tt-accent) !important;
+  color: var(--tt-bg) !important;
+  border-color: var(--tt-accent) !important;
+}
+/* if a version of YT puts the state on the button instead of the host */
+yt-chip-cloud-chip-renderer:has(.ytChipShapeActive),
+yt-chip-cloud-chip-renderer:has(button[aria-selected="true"]) {
+  background: var(--tt-accent) !important;
+  color: var(--tt-bg) !important;
+  border-color: var(--tt-accent) !important;
+}
+
+/* ---------- Thumbnails / cards ---------- */
+ytd-thumbnail, ytd-thumbnail a, ytd-thumbnail img,
+yt-thumbnail-view-model, yt-thumbnail-view-model img,
+.yt-core-image, ytd-playlist-thumbnail,
+#movie_player, .html5-video-player, .html5-main-video,
+ytd-rich-grid-media, #dismissible,
+yt-img-shadow, #avatar img, yt-img-shadow img {
+  border-radius: var(--tt-r) !important;
+}
+ytd-thumbnail, yt-thumbnail-view-model {
+  outline: 1px solid var(--tt-soft);
+  outline-offset: -1px;
+}
+ytd-rich-item-renderer:hover ytd-thumbnail,
+ytd-video-renderer:hover ytd-thumbnail,
+ytd-compact-video-renderer:hover ytd-thumbnail,
+ytd-rich-item-renderer:hover yt-thumbnail-view-model {
+  outline: var(--tt-bw) solid var(--tt-accent);
+}
+ytd-thumbnail-overlay-time-status-renderer, .badge-shape-wiz, .yt-badge-shape {
+  background: var(--tt-bg) !important;
+  color: var(--tt-fg) !important;
+  border: 1px solid var(--tt-soft) !important;
+  border-radius: var(--tt-r) !important;
+}
+#movie_player .ytp-progress-bar .ytp-play-progress { background: var(--tt-accent) !important; }
+ytd-thumbnail-overlay-resume-playback-renderer #progress { background: var(--tt-accent) !important; }
+
+/* shorts shelf + section headers get a soft divider */
+ytd-rich-shelf-renderer, ytd-reel-shelf-renderer {
+  border-top: 1px dashed var(--tt-soft) !important;
+  padding-top: 12px !important;
+  margin-top: 16px !important;
+}
+
+/* ---------- Text accents ---------- */
+ytd-channel-name a, ytd-channel-name yt-formatted-string a,
+#channel-name a, #owner #channel-name a {
+  color: var(--tt-accent2) !important;
+}
+#video-title, h3.ytd-rich-grid-media, yt-formatted-string.ytd-video-renderer { color: var(--tt-fg) !important; }
+#metadata-line, #metadata-line span, .inline-metadata-item { color: var(--tt-muted) !important; }
+a:hover { color: var(--tt-accent) !important; }
+
+/* ---------- Buttons, menus, popups ---------- */
+yt-button-shape button, .yt-spec-button-shape-next, #actions ytd-button-renderer a {
+  border-radius: var(--tt-r) !important;
+}
+.yt-spec-button-shape-next--tonal, .yt-spec-button-shape-next--filled {
+  background: var(--tt-bg2) !important;
+  color: var(--tt-fg) !important;
+  border: 1px solid var(--tt-soft) !important;
+}
+.yt-spec-button-shape-next--tonal:hover { border-color: var(--tt-accent) !important; }
+.yt-spec-button-shape-next--call-to-action, ytd-subscribe-button-renderer button {
+  background: var(--tt-accent) !important;
+  color: var(--tt-bg) !important;
+}
+tp-yt-paper-dialog, ytd-menu-popup-renderer, ytd-multi-page-menu-renderer,
+ytd-searchbox-spt, .ytSearchboxComponentSuggestionsContainer {
+  background: var(--tt-bg2) !important;
+  border: var(--tt-bw) solid var(--tt-muted) !important;
+  border-radius: var(--tt-r) !important;
+}
+
+/* ---------- Watch page ---------- */
+ytd-watch-flexy[flexy] #primary-inner > #player { margin-bottom: 18px !important; }
+ytd-watch-flexy #above-the-fold > #title { padding: 14px 16px !important; margin-top: 8px !important; }
+ytd-watch-metadata #owner, ytd-watch-metadata #actions { padding: 10px 16px !important; margin-top: 18px !important; }
+ytd-watch-metadata #description { margin-top: 18px !important; }
+ytd-comments#comments { margin-top: 18px !important; }
+ytd-watch-flexy #secondary-inner { padding: 0 !important; }
+ytd-watch-flexy #player::before { z-index: 2000; }
+
+#guide-spacer, ytd-guide-renderer #footer { display: none !important; }
+
+/* ---------- Search page layout (kill the big centred gap) ---------- */
+ytd-search ytd-two-column-search-results-renderer {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+ytd-search ytd-two-column-search-results-renderer #primary {
+  max-width: none !important;
+  width: auto !important;
+  margin: 8px 20px 20px 8px !important;
+}
+ytd-search ytd-section-list-renderer, ytd-search #contents.ytd-section-list-renderer { max-width: none !important; }
+ytd-search #chips-wrapper { position: static !important; }
+
+/* ---------- Standalone chips (history, playlists, etc.) ---------- */
+chip-shape:not(yt-chip-cloud-chip-renderer chip-shape) {
+  display: inline-flex !important;
+  background: var(--tt-bg2) !important;
+  color: var(--tt-fg) !important;
+  border: 1px solid var(--tt-soft) !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+chip-shape:not(yt-chip-cloud-chip-renderer chip-shape):hover { border-color: var(--tt-accent) !important; }
+chip-shape:not(yt-chip-cloud-chip-renderer chip-shape):has(.ytChipShapeActive),
+chip-shape:not(yt-chip-cloud-chip-renderer chip-shape):has(button[aria-selected="true"]) {
+  background: var(--tt-accent) !important;
+  color: var(--tt-bg) !important;
+  border-color: var(--tt-accent) !important;
+}
+
+/* ---------- Scroll arrows (chip bar, shelves) ---------- */
+#chips-wrapper #left-arrow, #chips-wrapper #right-arrow,
+#left-arrow-button, #right-arrow-button {
+  background: var(--tt-bg) !important;
+}
+#chips-wrapper #left-arrow::before, #chips-wrapper #right-arrow::before,
+#chips-wrapper #left-arrow::after,  #chips-wrapper #right-arrow::after,
+#left-arrow-shadow, #right-arrow-shadow {
+  background: none !important;
+  box-shadow: none !important;
+}
+#left-arrow button, #right-arrow button,
+#left-arrow-button button, #right-arrow-button button,
+yt-horizontal-list-renderer #left-arrow button, yt-horizontal-list-renderer #right-arrow button {
+  background: var(--tt-bg2) !important;
+  border: 1px solid var(--tt-soft) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: var(--tt-accent) !important;
+}
+#left-arrow button:hover, #right-arrow button:hover,
+#left-arrow-button button:hover, #right-arrow-button button:hover { border-color: var(--tt-accent) !important; }
+#left-arrow svg, #right-arrow svg, #left-arrow-button svg, #right-arrow-button svg,
+#left-arrow yt-icon, #right-arrow yt-icon { fill: var(--tt-accent) !important; color: var(--tt-accent) !important; }
+
+/* ---------- Shorts player ---------- */
+ytd-shorts, ytd-shorts #shorts-container, ytd-shorts #shorts-inner-container,
+ytd-shorts .navigation-container, ytd-shorts ytd-reel-video-renderer {
+  background: var(--tt-bg) !important;
+}
+ytd-shorts #shorts-player, ytd-shorts #player-container, ytd-shorts .player-container,
+ytd-shorts .html5-video-player, ytd-shorts .html5-video-container, ytd-shorts video,
+ytd-shorts ytd-reel-player-overlay-renderer {
+  border-radius: var(--tt-r) !important;
+}
+ytd-shorts ytd-reel-video-renderer[is-active] #player-container {
+  outline: var(--tt-bw) solid var(--tt-accent);
+  outline-offset: 0;
+}
+ytd-shorts button, ytd-shorts yt-icon-button, ytd-shorts [class*="shape-next"],
+ytd-shorts .yt-spec-button-shape-next--icon-button {
+  border-radius: var(--tt-r) !important;
+}
+ytd-shorts #actions button, ytd-shorts .yt-spec-button-shape-next--icon-button,
+ytd-shorts #navigation-button-up button, ytd-shorts #navigation-button-down button {
+  background: var(--tt-bg2) !important;
+  border: 1px solid var(--tt-soft) !important;
+  color: var(--tt-fg) !important;
+}
+ytd-shorts #actions button:hover, ytd-shorts #navigation-button-up button:hover,
+ytd-shorts #navigation-button-down button:hover { border-color: var(--tt-accent) !important; }
+
+/* ---------- FIX: collapsed sidebar (mini guide) must not sit in the page flow ---------- */
+:root, html { --ytd-mini-guide-width: 120px !important; }
+ytd-mini-guide-renderer {
+  position: fixed !important;
+  left: 0 !important;
+  top: var(--tt-mast) !important;
+  width: 96px !important;
+  z-index: 5 !important;
+  overflow: hidden auto !important;
+}
+ytd-mini-guide-renderer::before { z-index: 60; }
+ytd-mini-guide-renderer #items, ytd-mini-guide-renderer #sections { padding-top: 12px !important; }
+
+/* ---------- FIX: tighten the gap between scroll arrows and chips ---------- */
+#chips-wrapper #left-arrow, #chips-wrapper #right-arrow {
+  width: 40px !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+#chips-wrapper #left-arrow::before, #chips-wrapper #right-arrow::before,
+#chips-wrapper #left-arrow::after,  #chips-wrapper #right-arrow::after,
+#left-arrow-shadow, #right-arrow-shadow { display: none !important; }
+#left-arrow-button, #right-arrow-button {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+}
+ytd-feed-filter-chip-bar-renderer #chips-content { padding-left: 0 !important; padding-right: 0 !important; }
+
+/* ---------- FIX: arrows vertically centred on the chip row, fixed 32px squares ---------- */
+#chips-wrapper #left-arrow, #chips-wrapper #right-arrow {
+  top: 0 !important;
+  bottom: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+#left-arrow-button, #right-arrow-button,
+#left-arrow-button button, #right-arrow-button button,
+#chips-wrapper #left-arrow button, #chips-wrapper #right-arrow button {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+#left-arrow-button yt-icon, #right-arrow-button yt-icon,
+#left-arrow-button .yt-spec-button-shape-next__icon, #right-arrow-button .yt-spec-button-shape-next__icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+}
+
+/* ---------- FIX: search button blends into the bar border ---------- */
+.ytSearchboxComponentSearchButton, #search-icon-legacy {
+  box-sizing: border-box !important;
+  align-self: stretch !important;
+  box-shadow:
+    0 calc(var(--bw) * -1px) 0 var(--tt-accent),
+    0 calc(var(--bw) * 1px) 0 var(--tt-accent),
+    calc(var(--bw) * 1px) 0 0 var(--tt-accent) !important;
+}
+yt-searchbox, ytd-searchbox { overflow: visible !important; }
+
+/* ---------- FIX: respect YouTube hiding the arrows (left arrow at far left) ---------- */
+#chips-wrapper #left-arrow[hidden], #chips-wrapper #right-arrow[hidden],
+#chips-wrapper #left-arrow.hidden, #chips-wrapper #right-arrow.hidden,
+#chips-wrapper #left-arrow[style*="display: none"], #chips-wrapper #right-arrow[style*="display: none"],
+#left-arrow-button[hidden], #right-arrow-button[hidden],
+#left-arrow-button.hidden, #right-arrow-button.hidden,
+#left-arrow-button[style*="display: none"], #right-arrow-button[style*="display: none"] {
+  display: none !important;
+}
+
+}
